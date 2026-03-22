@@ -23,6 +23,80 @@ body {
 }
 
 @media print {
-  .no-print { display: none !important; }
-  .print-full { width: 100% !important; max-width: 100% !important; }
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  /* Force background colors & images to render in PDF */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Hide sidebar, top bar, and export button */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset the flex layout so the preview fills the page */
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-full {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+
+  /* The proposal card — remove shadow/rounding, fill the page */
+  .print-full > div {
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Prevent sections from breaking across pages */
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Keep table rows together */
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Keep the contact footer together and at the bottom */
+  footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Tighten spacing for print */
+  .print-full > div > div:last-child {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  /* Show link URLs after link text */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-weight: normal;
+    font-size: 0.7em;
+    text-decoration: none;
+    color: #566573;
+  }
+  a[href^="http"] {
+    text-decoration: none !important;
+  }
 }

@@ -49,6 +49,8 @@ const translations = {
     licensesLabel: "Licenses",
     investmentLabel: "Investment",
     afterPilotLabel: "After Pilot",
+    validUntilLabel: "Offer Valid Until",
+    validityLabel: "Offer Validity",
     aboutTitle: "About coobi",
     about:
       "Berlin-based health-tech company (est. 2021). Live in 37+ centres in Germany. Preliminarily reimbursed by Germany's largest addiction therapy payer. Two clinical studies (300+ patients) underway. King's College London study in preparation. Medical device certified.",
@@ -61,6 +63,7 @@ const translations = {
     currencyLabel: "Currency",
     priceLabel: "Price",
     perPatientLabel: "Per patient license",
+    validityDateLabel: "Offer Valid Until",
     summaryTitle: "Summary",
   },
   de: {
@@ -109,6 +112,8 @@ const translations = {
     licensesLabel: "Lizenzen",
     investmentLabel: "Investition",
     afterPilotLabel: "Nach dem Piloten",
+    validUntilLabel: "Angebot gültig bis",
+    validityLabel: "Angebotsgültigkeit",
     aboutTitle: "Über coobi",
     about:
       "Berliner Health-Tech-Unternehmen (gegr. 2021). In über 37 Einrichtungen in Deutschland im Einsatz. Vorläufig erstattet durch Deutschlands größten Kostenträger in der Suchttherapie. Zwei klinische Studien (300+ Patient:innen) laufen. King's College London Studie in Vorbereitung. Medizinprodukt-zertifiziert.",
@@ -121,15 +126,22 @@ const translations = {
     currencyLabel: "Währung",
     priceLabel: "Preis",
     perPatientLabel: "Pro Patientenlizenz",
+    validityDateLabel: "Angebot gültig bis",
     summaryTitle: "Zusammenfassung",
   },
 } as const;
 
 const currencySymbols: Record<string, string> = {
-  GBP: "£",
   EUR: "€",
+  GBP: "£",
   USD: "$",
   CHF: "CHF ",
+  AUD: "A$",
+  CAD: "C$",
+  SEK: "SEK ",
+  NOK: "NOK ",
+  DKK: "DKK ",
+  PLN: "PLN ",
 };
 
 function formatNumber(n: number): string {
@@ -144,6 +156,21 @@ function getCurrentMonth(lang: "en" | "de"): string {
   });
 }
 
+function getDefaultValidityDate(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 30);
+  return d.toISOString().slice(0, 10);
+}
+
+function formatDate(isoDate: string, lang: "en" | "de"): string {
+  const d = new Date(isoDate + "T00:00:00");
+  return d.toLocaleDateString(lang === "de" ? "de-DE" : "en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export default function Home() {
   const [lang, setLang] = useState<"en" | "de">("en");
   const [clinicName, setClinicName] = useState("");
@@ -151,6 +178,7 @@ export default function Home() {
   const [numLicenses, setNumLicenses] = useState(20);
   const [currency, setCurrency] = useState("EUR");
   const [price, setPrice] = useState(20000);
+  const [validUntil, setValidUntil] = useState(getDefaultValidityDate);
 
   const t = translations[lang];
   const sym = currencySymbols[currency];
@@ -167,7 +195,7 @@ export default function Home() {
   const month = getCurrentMonth(lang);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen print:block print:h-auto">
       {/* Top bar */}
       <header
         className="no-print flex items-center justify-between px-6 py-3"
@@ -189,7 +217,7 @@ export default function Home() {
         </button>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden print:block print:overflow-visible">
         {/* Sidebar */}
         <aside className="no-print w-80 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-5">
           <h2
@@ -289,6 +317,12 @@ export default function Home() {
               <option value="GBP">GBP (£)</option>
               <option value="USD">USD ($)</option>
               <option value="CHF">CHF</option>
+              <option value="AUD">AUD (A$)</option>
+              <option value="CAD">CAD (C$)</option>
+              <option value="SEK">SEK</option>
+              <option value="NOK">NOK</option>
+              <option value="DKK">DKK</option>
+              <option value="PLN">PLN</option>
             </select>
           </label>
 
@@ -310,6 +344,19 @@ export default function Home() {
             {t.perPatientLabel}: {sym}
             {formatNumber(Math.round(perPatient * 100) / 100)}
           </p>
+
+          {/* Offer validity date */}
+          <label className="block mb-5">
+            <span className="text-sm font-medium" style={{ color: "#566573" }}>
+              {t.validityDateLabel}
+            </span>
+            <input
+              type="date"
+              value={validUntil}
+              onChange={(e) => setValidUntil(e.target.value)}
+              className="mt-1.5 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 cursor-pointer"
+            />
+          </label>
 
           {/* Summary card */}
           <div
@@ -352,6 +399,12 @@ export default function Home() {
                 <span className="font-medium">
                   {sym}
                   {formatNumber(Math.round(perPatient * 100) / 100)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>{t.validityDateLabel}:</span>
+                <span className="font-medium">
+                  {formatDate(validUntil, lang)}
                 </span>
               </div>
             </div>
@@ -540,7 +593,7 @@ export default function Home() {
                         {t.pilotInvestment(sym, formatNumber(price))}
                       </td>
                     </tr>
-                    <tr>
+                    <tr className="border-b border-gray-200">
                       <td
                         className="px-4 py-3 font-medium"
                         style={{
@@ -552,6 +605,20 @@ export default function Home() {
                       </td>
                       <td className="px-4 py-3" style={{ color: "#2C3E50" }}>
                         {t.pilotAfter}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        className="px-4 py-3 font-medium"
+                        style={{
+                          backgroundColor: "#D6EAF8",
+                          color: "#1A5276",
+                        }}
+                      >
+                        {t.validUntilLabel}
+                      </td>
+                      <td className="px-4 py-3 font-medium" style={{ color: "#2C3E50" }}>
+                        {formatDate(validUntil, lang)}
                       </td>
                     </tr>
                   </tbody>
