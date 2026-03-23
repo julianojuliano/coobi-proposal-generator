@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
+import html2canvas from "html2canvas-pro";
+import jsPDF from "jspdf";
 
 const translations = {
   en: {
@@ -89,6 +91,8 @@ const translations = {
     perPatientLabel: "Per patient license",
     validityDateLabel: "Offer Valid Until",
     summaryTitle: "Summary",
+    exportBtn: "Export PDF",
+    exportingBtn: "Exporting...",
   },
   de: {
     title: "coobi care",
@@ -176,6 +180,8 @@ const translations = {
     perPatientLabel: "Pro Patientenlizenz",
     validityDateLabel: "Angebot gültig bis",
     summaryTitle: "Zusammenfassung",
+    exportBtn: "PDF exportieren",
+    exportingBtn: "Exportiert...",
   },
 } as const;
 
@@ -228,6 +234,9 @@ export default function Home() {
   const [currency, setCurrency] = useState("GBP");
   const [price, setPrice] = useState(20000);
   const [validUntil, setValidUntil] = useState(getDefaultValidityDate);
+  const [exporting, setExporting] = useState(false);
+
+  const proposalRef = useRef<HTMLDivElement>(null);
 
   const t = translations[lang];
   const sym = currencySymbols[currency];
@@ -243,84 +252,85 @@ export default function Home() {
   const month = getCurrentMonth(lang);
   const phases = t.phasesRows(pilotMonths, numLicenses);
 
-  const topBarRef = useRef<HTMLElement>(null);
-  const sidebarRef = useRef<HTMLElement>(null);
-  const layoutRef = useRef<HTMLDivElement>(null);
-  const mainRef = useRef<HTMLElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     document.title = clinicName
       ? `coobi care — Pilot Proposal for ${clinicName}`
       : "coobi care — Pilot Proposal";
   }, [clinicName]);
 
-  const handleBeforePrint = useCallback(() => {
-    if (topBarRef.current) topBarRef.current.style.display = "none";
-    if (sidebarRef.current) sidebarRef.current.style.display = "none";
-    if (layoutRef.current) {
-      layoutRef.current.style.display = "block";
-      layoutRef.current.style.overflow = "visible";
-      layoutRef.current.style.height = "auto";
-    }
-    if (mainRef.current) {
-      mainRef.current.style.display = "block";
-      mainRef.current.style.overflow = "visible";
-      mainRef.current.style.height = "auto";
-      mainRef.current.style.padding = "0";
-      mainRef.current.style.background = "white";
-    }
-    if (cardRef.current) {
-      cardRef.current.style.maxWidth = "100%";
-      cardRef.current.style.margin = "0";
-      cardRef.current.style.boxShadow = "none";
-      cardRef.current.style.borderRadius = "0";
-    }
-    document.body.style.background = "white";
-    document.documentElement.style.height = "auto";
-    document.body.style.height = "auto";
-  }, []);
+  async function exportPDF() {
+    const el = proposalRef.current;
+    if (!el || exporting) return;
+    setExporting(true);
 
-  const handleAfterPrint = useCallback(() => {
-    if (topBarRef.current) topBarRef.current.style.display = "";
-    if (sidebarRef.current) sidebarRef.current.style.display = "";
-    if (layoutRef.current) {
-      layoutRef.current.style.display = "";
-      layoutRef.current.style.overflow = "";
-      layoutRef.current.style.height = "";
-    }
-    if (mainRef.current) {
-      mainRef.current.style.display = "";
-      mainRef.current.style.overflow = "";
-      mainRef.current.style.height = "";
-      mainRef.current.style.padding = "";
-      mainRef.current.style.background = "";
-    }
-    if (cardRef.current) {
-      cardRef.current.style.maxWidth = "";
-      cardRef.current.style.margin = "";
-      cardRef.current.style.boxShadow = "";
-      cardRef.current.style.borderRadius = "";
-    }
-    document.body.style.background = "";
-    document.documentElement.style.height = "";
-    document.body.style.height = "";
-  }, []);
+    try {
+      // A4 in mm
+      const A4_W = 210;
+      const A4_H = 297;
+      const scale = 2;
 
-  useEffect(() => {
-    window.addEventListener("beforeprint", handleBeforePrint);
-    window.addEventListener("afterprint", handleAfterPrint);
-    return () => {
-      window.removeEventListener("beforeprint", handleBeforePrint);
-      window.removeEventListener("afterprint", handleAfterPrint);
-    };
-  }, [handleBeforePrint, handleAfterPrint]);
+      const canvas = await html2canvas(el, {
+        scale,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        width: el.scrollWidth,
+        height: el.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const imgW = canvas.width;
+      const imgH = canvas.height;
+
+      // Fit content width to A4 width
+      const pdfW = A4_W;
+      const pdfH = (imgH * pdfW) / imgW;
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      if (pdfH <= A4_H) {
+        // Fits on one page
+        pdf.addImage(imgData, "PNG", 0, 0, pdfW, pdfH);
+      } else {
+        // Multi-page: slice the canvas into A4-height chunks
+        const pageHeightPx = (A4_H / pdfW) * imgW;
+        const totalPages = Math.ceil(imgH / pageHeightPx);
+
+        for (let i = 0; i < totalPages; i++) {
+          if (i > 0) pdf.addPage();
+
+          const srcY = i * pageHeightPx;
+          const srcH = Math.min(pageHeightPx, imgH - srcY);
+          const destH = (srcH * pdfW) / imgW;
+
+          // Create a canvas slice for this page
+          const pageCanvas = document.createElement("canvas");
+          pageCanvas.width = imgW;
+          pageCanvas.height = srcH;
+          const ctx = pageCanvas.getContext("2d")!;
+          ctx.drawImage(canvas, 0, srcY, imgW, srcH, 0, 0, imgW, srcH);
+
+          const pageData = pageCanvas.toDataURL("image/png");
+          pdf.addImage(pageData, "PNG", 0, 0, pdfW, destH);
+        }
+      }
+
+      const filename = clinicName
+        ? `coobi care — Pilot Proposal for ${clinicName}.pdf`
+        : "coobi care — Pilot Proposal.pdf";
+      pdf.save(filename);
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
-    <div data-print-root className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen">
       {/* Top bar */}
       <header
-        ref={topBarRef}
         className="flex items-center justify-between px-6 py-3"
         style={{ backgroundColor: "#1A5276" }}
       >
@@ -333,16 +343,17 @@ export default function Home() {
           </span>
         </div>
         <button
-          onClick={() => window.print()}
-          className="text-white/80 hover:text-white text-sm px-3 py-1.5 border border-white/30 rounded hover:bg-white/10 transition-colors cursor-pointer"
+          onClick={exportPDF}
+          disabled={exporting}
+          className="text-white/80 hover:text-white text-sm px-3 py-1.5 border border-white/30 rounded hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait"
         >
-          {lang === "de" ? "PDF exportieren" : "Export PDF"}
+          {exporting ? t.exportingBtn : t.exportBtn}
         </button>
       </header>
 
-      <div ref={layoutRef} className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside ref={sidebarRef} className="w-80 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-5">
+        <aside className="w-80 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-5">
           <h2 className="text-lg font-bold mb-5" style={{ color: "#2C3E50" }}>
             {t.sidebarTitle}
           </h2>
@@ -370,7 +381,6 @@ export default function Home() {
             </div>
           </label>
 
-          {/* Clinic name */}
           <label className="block mb-4">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.clinicLabel}
@@ -385,7 +395,6 @@ export default function Home() {
             />
           </label>
 
-          {/* Number of clinics */}
           <label className="block mb-4">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.numClinicsLabel}
@@ -399,7 +408,6 @@ export default function Home() {
             />
           </label>
 
-          {/* Number of licenses */}
           <label className="block mb-4">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.numLicensesLabel}
@@ -413,7 +421,6 @@ export default function Home() {
             />
           </label>
 
-          {/* Pilot duration */}
           <label className="block mb-4">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.pilotDurationLabel}
@@ -423,12 +430,13 @@ export default function Home() {
               min={1}
               max={24}
               value={pilotMonths}
-              onChange={(e) => setPilotMonths(Math.max(1, Math.min(24, +e.target.value)))}
+              onChange={(e) =>
+                setPilotMonths(Math.max(1, Math.min(24, +e.target.value)))
+              }
               className="mt-1.5 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2"
             />
           </label>
 
-          {/* Currency */}
           <label className="block mb-4">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.currencyLabel}
@@ -451,7 +459,6 @@ export default function Home() {
             </select>
           </label>
 
-          {/* Price */}
           <label className="block mb-1">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.priceLabel}
@@ -470,7 +477,6 @@ export default function Home() {
             {formatNumber(Math.round(perPatient * 100) / 100)}
           </p>
 
-          {/* Offer validity date */}
           <label className="block mb-5">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
               {t.validityDateLabel}
@@ -488,34 +494,54 @@ export default function Home() {
             className="rounded-lg p-4 border"
             style={{ backgroundColor: "#D6EAF8", borderColor: "#1A5276" }}
           >
-            <h3 className="text-sm font-bold mb-3" style={{ color: "#1A5276" }}>
+            <h3
+              className="text-sm font-bold mb-3"
+              style={{ color: "#1A5276" }}
+            >
               {t.summaryTitle}
             </h3>
-            <div className="space-y-1.5 text-xs" style={{ color: "#2C3E50" }}>
+            <div
+              className="space-y-1.5 text-xs"
+              style={{ color: "#2C3E50" }}
+            >
               <SummaryRow label={t.clinicLabel} value={clinicName || "—"} />
-              <SummaryRow label={t.numClinicsLabel} value={String(numClinics)} />
-              <SummaryRow label={t.numLicensesLabel} value={String(numLicenses)} />
-              <SummaryRow label={t.pilotDurationLabel} value={`${pilotMonths}m`} />
-              <SummaryRow label={t.priceLabel} value={`${sym}${formatNumber(price)}`} />
-              <SummaryRow label={t.perPatientLabel} value={`${sym}${formatNumber(Math.round(perPatient * 100) / 100)}`} />
-              <SummaryRow label={t.validityDateLabel} value={formatDate(validUntil, lang)} />
+              <SummaryRow
+                label={t.numClinicsLabel}
+                value={String(numClinics)}
+              />
+              <SummaryRow
+                label={t.numLicensesLabel}
+                value={String(numLicenses)}
+              />
+              <SummaryRow
+                label={t.pilotDurationLabel}
+                value={`${pilotMonths}m`}
+              />
+              <SummaryRow
+                label={t.priceLabel}
+                value={`${sym}${formatNumber(price)}`}
+              />
+              <SummaryRow
+                label={t.perPatientLabel}
+                value={`${sym}${formatNumber(Math.round(perPatient * 100) / 100)}`}
+              />
+              <SummaryRow
+                label={t.validityDateLabel}
+                value={formatDate(validUntil, lang)}
+              />
             </div>
           </div>
         </aside>
 
         {/* Preview */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto bg-gray-100 p-8">
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-8">
           <div
-            ref={cardRef}
+            ref={proposalRef}
             className="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden"
             style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
           >
             {/* Proposal header */}
-            <div
-              data-print-header
-              className="px-8 py-4"
-              style={{ backgroundColor: "#1A5276" }}
-            >
+            <div className="px-8 py-4" style={{ backgroundColor: "#1A5276" }}>
               <h1 className="text-xl font-bold text-white">
                 <span className="font-bold">{t.title}</span>
                 <span className="font-normal text-white/80">
@@ -527,11 +553,14 @@ export default function Home() {
               </p>
             </div>
 
-            <div data-print-body className="px-8 py-4 space-y-3">
+            <div className="px-8 py-4 space-y-3">
               {/* Pilot Concept */}
               <section>
                 <SectionTitle>{t.conceptTitle}</SectionTitle>
-                <p className="text-xs leading-relaxed" style={{ color: "#2C3E50" }}>
+                <p
+                  className="text-xs leading-relaxed"
+                  style={{ color: "#2C3E50" }}
+                >
                   {t.concept(clinicPossessive)}
                 </p>
               </section>
@@ -550,7 +579,10 @@ export default function Home() {
                     {t.howPhases.map((p, i) => (
                       <tr key={i} className="border-b border-gray-200">
                         <LabelTd>{p.phase}</LabelTd>
-                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                        <td
+                          className="px-3 py-1.5"
+                          style={{ color: "#2C3E50" }}
+                        >
                           {p.desc}
                         </td>
                       </tr>
@@ -572,11 +604,17 @@ export default function Home() {
                   <tbody>
                     {t.clientItems.map((item, i) => (
                       <tr key={i} className="border-b border-gray-200">
-                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                        <td
+                          className="px-3 py-1.5"
+                          style={{ color: "#2C3E50" }}
+                        >
                           <Bullet />
                           {item}
                         </td>
-                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                        <td
+                          className="px-3 py-1.5"
+                          style={{ color: "#2C3E50" }}
+                        >
                           <Bullet />
                           {t.clinicItems[i]}
                         </td>
@@ -593,25 +631,37 @@ export default function Home() {
                   <tbody>
                     <tr className="border-b border-gray-200">
                       <LabelTd width="22%">{t.durationLabel}</LabelTd>
-                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                      <td
+                        className="px-3 py-1.5"
+                        style={{ color: "#2C3E50" }}
+                      >
                         {t.pilotDuration(pilotMonths, numClinics)}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.licensesLabel}</LabelTd>
-                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                      <td
+                        className="px-3 py-1.5"
+                        style={{ color: "#2C3E50" }}
+                      >
                         {t.pilotLicenses(numLicenses)}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.investmentLabel}</LabelTd>
-                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                      <td
+                        className="px-3 py-1.5"
+                        style={{ color: "#2C3E50" }}
+                      >
                         {t.pilotInvestment(sym, formatNumber(price))}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.validUntilLabel}</LabelTd>
-                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                      <td
+                        className="px-3 py-1.5"
+                        style={{ color: "#2C3E50" }}
+                      >
                         {formatDate(validUntil, lang)}
                       </td>
                     </tr>
@@ -633,7 +683,10 @@ export default function Home() {
                     {phases.map((p, i) => (
                       <tr key={i} className="border-b border-gray-200">
                         <LabelTd>{p.when}</LabelTd>
-                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                        <td
+                          className="px-3 py-1.5"
+                          style={{ color: "#2C3E50" }}
+                        >
                           {p.what}
                         </td>
                       </tr>
@@ -647,31 +700,20 @@ export default function Home() {
                 className="pt-3 mt-2 text-xs flex flex-wrap items-center gap-x-1"
                 style={{ color: "#566573", borderTop: "1px solid #D6EAF8" }}
               >
-                <span className="font-semibold" style={{ color: "#2C3E50" }}>
+                <span
+                  className="font-semibold"
+                  style={{ color: "#2C3E50" }}
+                >
                   Julian Kruse
                 </span>
                 <span>|</span>
                 <span>Co-Founder, Stigma Health GmbH (coobi)</span>
                 <span>|</span>
-                <a href="mailto:julian@coobi.health">julian@coobi.health</a>
+                <span>julian@coobi.health</span>
                 <span>|</span>
-                <a
-                  href="https://cal.com/julian-kruse/demo"
-                  className="underline hover:no-underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Book a call
-                </a>
+                <span>Book a call</span>
                 <span>|</span>
-                <a
-                  href="https://www.coobi.health"
-                  className="underline hover:no-underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  coobi.health
-                </a>
+                <span>coobi.health</span>
               </footer>
             </div>
           </div>
