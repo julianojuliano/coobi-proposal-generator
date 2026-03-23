@@ -34,17 +34,13 @@ body {
     color-adjust: exact !important;
   }
 
-  .no-print {
-    display: none !important;
-  }
-
-  /* Nuke every layout wrapper */
+  /* Flatten layout wrappers */
   html,
   body,
   #__next,
   [data-print-root],
-  [data-print-root] > *,
-  [data-print-root] > * > *,
+  [data-print-root] > *:not(.no-print),
+  [data-print-root] > * > *:not(.no-print),
   .print-full {
     display: block !important;
     position: static !important;
@@ -61,7 +57,7 @@ body {
     border: none !important;
   }
 
-  /* The proposal card — strip everything */
+  /* Strip card styling */
   [data-print-card] {
     max-width: 100% !important;
     width: 100% !important;
@@ -73,7 +69,7 @@ body {
     background: white !important;
   }
 
-  /* Header — full bleed */
+  /* Full-bleed header */
   [data-print-header] {
     margin: -10mm -14mm 0 -14mm !important;
     padding: 8mm 14mm 6mm 14mm !important;
@@ -81,7 +77,7 @@ body {
     background-color: #1A5276 !important;
   }
 
-  /* Body — tight */
+  /* Body content */
   [data-print-body] {
     padding: 4mm 0 0 0 !important;
   }
@@ -104,8 +100,13 @@ body {
     padding-top: 2mm !important;
   }
 
-  /* Hide link URLs in print — they add clutter */
+  /* Hide link URLs in print */
   a[href]::after {
     content: none !important;
+  }
+
+  /* MUST come last to win specificity over the wildcard reset */
+  .no-print {
+    display: none !important;
   }
 }
