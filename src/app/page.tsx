@@ -537,11 +537,11 @@ export default function Home() {
         <main className="flex-1 overflow-y-auto bg-gray-100 p-8">
           <div
             ref={proposalRef}
-            className="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden"
-            style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+            className="mx-auto bg-white shadow-lg overflow-hidden"
+            style={{ fontFamily: "Arial, Helvetica, sans-serif", width: 794, minHeight: 1123 }}
           >
             {/* Proposal header */}
-            <div className="px-8 py-4" style={{ backgroundColor: "#1A5276" }}>
+            <div className="px-10 py-5" style={{ backgroundColor: "#1A5276" }}>
               <h1 className="text-xl font-bold text-white">
                 <span className="font-bold">{t.title}</span>
                 <span className="font-normal text-white/80">
@@ -553,7 +553,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="px-8 py-4 space-y-3">
+            <div className="px-10 py-6 space-y-4">
               {/* Pilot Concept */}
               <section>
                 <SectionTitle>{t.conceptTitle}</SectionTitle>
@@ -580,7 +580,7 @@ export default function Home() {
                       <tr key={i} className="border-b border-gray-200">
                         <LabelTd>{p.phase}</LabelTd>
                         <td
-                          className="px-3 py-1.5"
+                          className="px-4 py-2"
                           style={{ color: "#2C3E50" }}
                         >
                           {p.desc}
@@ -605,14 +605,14 @@ export default function Home() {
                     {t.clientItems.map((item, i) => (
                       <tr key={i} className="border-b border-gray-200">
                         <td
-                          className="px-3 py-1.5"
+                          className="px-4 py-2"
                           style={{ color: "#2C3E50" }}
                         >
                           <Bullet />
                           {item}
                         </td>
                         <td
-                          className="px-3 py-1.5"
+                          className="px-4 py-2"
                           style={{ color: "#2C3E50" }}
                         >
                           <Bullet />
@@ -632,7 +632,7 @@ export default function Home() {
                     <tr className="border-b border-gray-200">
                       <LabelTd width="22%">{t.durationLabel}</LabelTd>
                       <td
-                        className="px-3 py-1.5"
+                        className="px-4 py-2"
                         style={{ color: "#2C3E50" }}
                       >
                         {t.pilotDuration(pilotMonths, numClinics)}
@@ -641,7 +641,7 @@ export default function Home() {
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.licensesLabel}</LabelTd>
                       <td
-                        className="px-3 py-1.5"
+                        className="px-4 py-2"
                         style={{ color: "#2C3E50" }}
                       >
                         {t.pilotLicenses(numLicenses)}
@@ -650,7 +650,7 @@ export default function Home() {
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.investmentLabel}</LabelTd>
                       <td
-                        className="px-3 py-1.5"
+                        className="px-4 py-2"
                         style={{ color: "#2C3E50" }}
                       >
                         {t.pilotInvestment(sym, formatNumber(price))}
@@ -659,7 +659,7 @@ export default function Home() {
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.validUntilLabel}</LabelTd>
                       <td
-                        className="px-3 py-1.5"
+                        className="px-4 py-2"
                         style={{ color: "#2C3E50" }}
                       >
                         {formatDate(validUntil, lang)}
@@ -684,7 +684,7 @@ export default function Home() {
                       <tr key={i} className="border-b border-gray-200">
                         <LabelTd>{p.when}</LabelTd>
                         <td
-                          className="px-3 py-1.5"
+                          className="px-4 py-2"
                           style={{ color: "#2C3E50" }}
                         >
                           {p.what}
@@ -728,7 +728,7 @@ export default function Home() {
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-sm font-bold mb-1.5 pb-0.5 border-b"
+      className="text-sm font-bold mb-2 pb-1 border-b"
       style={{ color: "#1A5276", borderColor: "#D6A84C" }}
     >
       {children}
@@ -745,7 +745,7 @@ function Th({
 }) {
   return (
     <th
-      className="text-left px-3 py-1.5 text-white font-semibold text-xs"
+      className="text-left px-4 py-2 text-white font-semibold text-xs"
       style={{ backgroundColor: "#1A5276", width }}
     >
       {children}
@@ -762,7 +762,7 @@ function LabelTd({
 }) {
   return (
     <td
-      className="px-3 py-1.5 font-medium text-xs whitespace-pre-line"
+      className="px-4 py-2 font-medium text-xs whitespace-pre-line"
       style={{ backgroundColor: "#D6EAF8", color: "#1A5276", width }}
     >
       {children}
