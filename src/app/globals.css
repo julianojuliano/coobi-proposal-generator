@@ -34,50 +34,13 @@ body {
     color-adjust: exact !important;
   }
 
-  /* Flatten layout wrappers */
-  html,
-  body,
-  #__next,
-  [data-print-root],
-  [data-print-root] > *:not(.no-print),
-  [data-print-root] > * > *:not(.no-print),
-  .print-full {
-    display: block !important;
-    position: static !important;
-    float: none !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-    background: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    border: none !important;
-  }
-
-  /* Strip card styling */
-  [data-print-card] {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
-    background: white !important;
-  }
-
-  /* Full-bleed header */
+  /* Header full-bleed into page margins */
   [data-print-header] {
     margin: -10mm -14mm 0 -14mm !important;
     padding: 8mm 14mm 6mm 14mm !important;
-    border-radius: 0 !important;
-    background-color: #1A5276 !important;
   }
 
-  /* Body content */
+  /* Body content spacing */
   [data-print-body] {
     padding: 4mm 0 0 0 !important;
   }
@@ -86,6 +49,12 @@ body {
     margin-bottom: 3mm !important;
   }
 
+  [data-print-body] > footer {
+    margin-top: 3mm !important;
+    padding-top: 2mm !important;
+  }
+
+  /* Page break control */
   section, footer {
     break-inside: avoid;
     page-break-inside: avoid;
@@ -93,20 +62,5 @@ body {
   tr {
     break-inside: avoid;
     page-break-inside: avoid;
-  }
-
-  [data-print-body] > footer {
-    margin-top: 3mm !important;
-    padding-top: 2mm !important;
-  }
-
-  /* Hide link URLs in print */
-  a[href]::after {
-    content: none !important;
-  }
-
-  /* MUST come last to win specificity over the wildcard reset */
-  .no-print {
-    display: none !important;
   }
 }

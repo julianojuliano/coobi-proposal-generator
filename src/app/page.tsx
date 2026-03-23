@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const translations = {
   en: {
@@ -243,17 +243,85 @@ export default function Home() {
   const month = getCurrentMonth(lang);
   const phases = t.phasesRows(pilotMonths, numLicenses);
 
+  const topBarRef = useRef<HTMLElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const layoutRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     document.title = clinicName
       ? `coobi care — Pilot Proposal for ${clinicName}`
       : "coobi care — Pilot Proposal";
   }, [clinicName]);
 
+  const handleBeforePrint = useCallback(() => {
+    if (topBarRef.current) topBarRef.current.style.display = "none";
+    if (sidebarRef.current) sidebarRef.current.style.display = "none";
+    if (layoutRef.current) {
+      layoutRef.current.style.display = "block";
+      layoutRef.current.style.overflow = "visible";
+      layoutRef.current.style.height = "auto";
+    }
+    if (mainRef.current) {
+      mainRef.current.style.display = "block";
+      mainRef.current.style.overflow = "visible";
+      mainRef.current.style.height = "auto";
+      mainRef.current.style.padding = "0";
+      mainRef.current.style.background = "white";
+    }
+    if (cardRef.current) {
+      cardRef.current.style.maxWidth = "100%";
+      cardRef.current.style.margin = "0";
+      cardRef.current.style.boxShadow = "none";
+      cardRef.current.style.borderRadius = "0";
+    }
+    document.body.style.background = "white";
+    document.documentElement.style.height = "auto";
+    document.body.style.height = "auto";
+  }, []);
+
+  const handleAfterPrint = useCallback(() => {
+    if (topBarRef.current) topBarRef.current.style.display = "";
+    if (sidebarRef.current) sidebarRef.current.style.display = "";
+    if (layoutRef.current) {
+      layoutRef.current.style.display = "";
+      layoutRef.current.style.overflow = "";
+      layoutRef.current.style.height = "";
+    }
+    if (mainRef.current) {
+      mainRef.current.style.display = "";
+      mainRef.current.style.overflow = "";
+      mainRef.current.style.height = "";
+      mainRef.current.style.padding = "";
+      mainRef.current.style.background = "";
+    }
+    if (cardRef.current) {
+      cardRef.current.style.maxWidth = "";
+      cardRef.current.style.margin = "";
+      cardRef.current.style.boxShadow = "";
+      cardRef.current.style.borderRadius = "";
+    }
+    document.body.style.background = "";
+    document.documentElement.style.height = "";
+    document.body.style.height = "";
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("beforeprint", handleBeforePrint);
+    window.addEventListener("afterprint", handleAfterPrint);
+    return () => {
+      window.removeEventListener("beforeprint", handleBeforePrint);
+      window.removeEventListener("afterprint", handleAfterPrint);
+    };
+  }, [handleBeforePrint, handleAfterPrint]);
+
   return (
     <div data-print-root className="flex flex-col h-screen">
       {/* Top bar */}
       <header
-        className="no-print flex items-center justify-between px-6 py-3"
+        ref={topBarRef}
+        className="flex items-center justify-between px-6 py-3"
         style={{ backgroundColor: "#1A5276" }}
       >
         <div className="flex items-center gap-3">
@@ -272,9 +340,9 @@ export default function Home() {
         </button>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div ref={layoutRef} className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="no-print w-80 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-5">
+        <aside ref={sidebarRef} className="w-80 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-5">
           <h2 className="text-lg font-bold mb-5" style={{ color: "#2C3E50" }}>
             {t.sidebarTitle}
           </h2>
@@ -436,9 +504,9 @@ export default function Home() {
         </aside>
 
         {/* Preview */}
-        <main className="flex-1 overflow-y-auto bg-gray-100 p-8 print-full">
+        <main ref={mainRef} className="flex-1 overflow-y-auto bg-gray-100 p-8">
           <div
-            data-print-card
+            ref={cardRef}
             className="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden"
             style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
           >
