@@ -4,62 +4,86 @@ import { useState } from "react";
 
 const translations = {
   en: {
-    title: "coobi care Pilot Proposal",
+    title: "coobi care",
+    titleSuffix: "Pilot Proposal for",
     subtitle: (month: string) =>
       `Enhancing Aftercare Through Continuous Digital Monitoring | ${month} | Confidential`,
-    conceptTitle: "The Concept",
+    conceptTitle: "Pilot Concept",
     concept: (clinic: string) =>
-      `coobi care bridges the gap between structured treatment and independent living. Clients receive a Garmin smartwatch and companion app in the last 4 weeks of inpatient treatment, then continue using coobi for 12 months after discharge — alongside ${clinic} existing aftercare sessions. The platform passively monitors sleep, stress, activity, and heart-rate variability, giving aftercare specialists continuous visibility into client wellbeing between sessions. To get the most out of this, it helps to allocate some additional time for the aftercare specialist to review the dashboard and check in with clients proactively.`,
+      `coobi care bridges the gap between structured treatment and independent living. Clients receive a Garmin smartwatch and companion app in the last 4 weeks of inpatient treatment, then continue using coobi for 12 months after discharge, alongside ${clinic} existing aftercare sessions. The platform passively monitors sleep, stress, activity, and heart-rate variability, giving aftercare specialists continuous visibility into client wellbeing between sessions. To get the most out of this, it helps to allocate some additional time for the aftercare specialist to review the dashboard and check in with clients proactively.`,
     howTitle: "How It Works",
+    howPhaseCol: "Phase",
+    howWhatCol: "What Happens",
     howPhases: [
       {
-        phase: "Last 4 weeks (Inpatient)",
-        desc: "Onboarding with smartwatch and app in a supported setting. Therapists establish a data baseline before discharge.",
+        phase: "Last 4 weeks\n(Inpatient)",
+        desc: "Onboarding with smartwatch and app in a supported setting. coobi establishes a data baseline before discharge. Clients get familiar with the watch and app by patients with the help of instruction videos.",
       },
       {
-        phase: "Months 1–12 (Aftercare)",
-        desc: "Passive monitoring runs continuously. Aftercare therapist uses the coobi dashboard to identify concerns and reach out proactively. Sessions (in-person or video call) are informed by real data rather than self-report alone.",
+        phase: "Months 1–13\n(Aftercare)",
+        desc: "App access continuously: coping tools, recovery modules, crisis support, daily reflection(s) and continuous passive monitoring. Aftercare therapists use the coobi dashboard to identify problem areas and reach out proactively. Sessions (in-person or video call) are informed by real data rather than self-report alone.",
       },
     ],
     includedTitle: "What's Included",
-    forClients: "For Clients",
+    forClients: "For Patients",
     forClinic: "For Your Clinic",
     clientItems: [
       "coobi packages (incl. Garmin smartwatches & 12-month app access)",
-      "E-learning modules & coping tools",
+      "Daily reflection, e-learning modules & coping tools",
       "Emergency contacts & peer community",
       "AI-driven real-time interventions",
+      "Technical support",
     ],
     clinicItems: [
-      "Therapist dashboard with alerts",
-      "Onboarding & staff training",
-      "Content adaptations (clinic contacts, smaller adaptations)",
-      "Integration scoping for full rollout after the pilot",
+      "Therapist dashboard with access to patient data",
+      "Kick-off workshop (incl. onboarding & staff training)",
+      "Content adaptations (clinic contacts, smaller content changes)",
+      "Integration workshop for full rollout after the pilot in the third month of the pilot",
+      "Technical support",
     ],
     pilotTitle: "Pilot Terms",
-    pilotDuration: (n: number) =>
-      `3 months across ${n} clinic${n !== 1 ? "s" : ""}`,
+    pilotDuration: (months: number, n: number) =>
+      `${months} months across min. ${n} clinic${n !== 1 ? "s" : ""}`,
     pilotLicenses: (n: number) =>
-      `${n} patients (12 months app access + Garmin smartwatch each)`,
+      `${n} patients (12 months app access + Garmin smartwatches)`,
     pilotInvestment: (currency: string, price: string) =>
-      `${currency}${price} (one-time) — includes everything above`,
-    pilotAfter:
-      "Transition to standard pricing for continued use. Additional features, integrations, or customisations may come at extra cost.",
+      `${currency}${price} (one-time) - includes everything above`,
     durationLabel: "Duration",
     licensesLabel: "Licenses",
     investmentLabel: "Investment",
-    afterPilotLabel: "After Pilot",
-    validUntilLabel: "Offer Valid Until",
-    validityLabel: "Offer Validity",
-    aboutTitle: "About coobi",
-    about:
-      "Berlin-based health-tech company (est. 2021). Live in 37+ centres in Germany. Preliminarily reimbursed by Germany's largest addiction therapy payer. Two clinical studies (300+ patients) underway. King's College London study in preparation. Medical device certified.",
+    validUntilLabel: "Offer valid until",
+    phasesTitle: "Pilot Phases",
+    phasesWhenCol: "When",
+    phasesWhatCol: "What Happens",
+    phasesRows: (months: number, licenses: number) => [
+      {
+        when: "Week 1",
+        what: "Pilot start & implementation: kick-off workshop, content adaptations, dashboard setup, and staff training.",
+      },
+      {
+        when: `Months 1–${months}`,
+        what: `Test coobi care with ${licenses} patients across clinics. Continuous monitoring, dashboard usage, and aftercare integration.`,
+      },
+      {
+        when: `Beginning of Month ${Math.max(1, months - 1)}`,
+        what: "Integration workshop: joint review of pilot outcomes and definition of requirements for a full rollout.",
+      },
+      {
+        when: `Month ${Math.max(1, months - 1)} & ${months}`,
+        what: "Implementation of additional features, integrations, or customisations as needed.",
+      },
+      {
+        when: "After Pilot",
+        what: "Transition to standard pricing for continued use.",
+      },
+    ],
     sidebarTitle: "Configuration",
     langLabel: "Language",
-    clinicLabel: "Clinic Name",
-    clinicPlaceholder: "e.g. Sunrise Clinic",
+    clinicLabel: "Clinic / Group Name",
+    clinicPlaceholder: "e.g. Rehab Clinic Groups",
     numClinicsLabel: "Number of Clinics",
     numLicensesLabel: "Number of Licenses",
+    pilotDurationLabel: "Pilot Duration (months)",
     currencyLabel: "Currency",
     priceLabel: "Price",
     perPatientLabel: "Per patient license",
@@ -67,62 +91,86 @@ const translations = {
     summaryTitle: "Summary",
   },
   de: {
-    title: "coobi care Pilotvorschlag",
+    title: "coobi care",
+    titleSuffix: "Pilotvorschlag für",
     subtitle: (month: string) =>
       `Nachsorge verbessern durch kontinuierliches digitales Monitoring | ${month} | Vertraulich`,
-    conceptTitle: "Das Konzept",
+    conceptTitle: "Pilotkonzept",
     concept: (clinic: string) =>
       `coobi care schließt die Lücke zwischen strukturierter Behandlung und selbstständigem Leben. Klient:innen erhalten in den letzten 4 Wochen der stationären Behandlung eine Garmin-Smartwatch und die zugehörige App und nutzen coobi dann 12 Monate nach der Entlassung weiter — begleitend zu ${clinic} bestehenden Nachsorgesitzungen. Die Plattform überwacht passiv Schlaf, Stress, Aktivität und Herzratenvariabilität und gibt Nachsorge-Spezialist:innen kontinuierliche Einblicke in das Wohlbefinden der Klient:innen zwischen den Sitzungen. Um das Beste daraus zu machen, ist es hilfreich, den Nachsorge-Spezialist:innen etwas zusätzliche Zeit einzuräumen, um das Dashboard zu prüfen und proaktiv mit den Klient:innen in Kontakt zu treten.`,
     howTitle: "So funktioniert's",
+    howPhaseCol: "Phase",
+    howWhatCol: "Was passiert",
     howPhases: [
       {
-        phase: "Letzte 4 Wochen (Stationär)",
-        desc: "Onboarding mit Smartwatch und App in einem begleiteten Setting. Therapeut:innen erstellen eine Daten-Baseline vor der Entlassung.",
+        phase: "Letzte 4 Wochen\n(Stationär)",
+        desc: "Onboarding mit Smartwatch und App in einem begleiteten Setting. coobi erstellt eine Daten-Baseline vor der Entlassung. Klient:innen machen sich mithilfe von Anleitungsvideos mit Uhr und App vertraut.",
       },
       {
-        phase: "Monate 1–12 (Nachsorge)",
-        desc: "Passives Monitoring läuft kontinuierlich. Nachsorge-Therapeut:innen nutzen das coobi-Dashboard, um Auffälligkeiten zu erkennen und proaktiv Kontakt aufzunehmen. Sitzungen (persönlich oder per Videoanruf) basieren auf echten Daten statt nur auf Selbstberichten.",
+        phase: "Monate 1–13\n(Nachsorge)",
+        desc: "Kontinuierlicher App-Zugang: Bewältigungstools, Recovery-Module, Krisenunterstützung, tägliche Reflexion(en) und kontinuierliches passives Monitoring. Nachsorge-Therapeut:innen nutzen das coobi-Dashboard, um Problemfelder zu erkennen und proaktiv Kontakt aufzunehmen. Sitzungen (persönlich oder per Videoanruf) basieren auf echten Daten statt nur auf Selbstberichten.",
       },
     ],
     includedTitle: "Was ist enthalten",
-    forClients: "Für Klient:innen",
+    forClients: "Für Patient:innen",
     forClinic: "Für Ihre Klinik",
     clientItems: [
       "coobi-Pakete (inkl. Garmin-Smartwatches & 12 Monate App-Zugang)",
-      "E-Learning-Module & Bewältigungstools",
+      "Tägliche Reflexion, E-Learning-Module & Bewältigungstools",
       "Notfallkontakte & Peer-Community",
       "KI-gestützte Echtzeit-Interventionen",
+      "Technischer Support",
     ],
     clinicItems: [
-      "Therapeuten-Dashboard mit Warnungen",
-      "Onboarding & Mitarbeiterschulung",
-      "Inhaltsanpassungen (Klinikkontakte, kleinere Anpassungen)",
-      "Integrations-Scoping für den vollständigen Rollout nach dem Piloten",
+      "Therapeuten-Dashboard mit Zugang zu Patientendaten",
+      "Kick-off-Workshop (inkl. Onboarding & Mitarbeiterschulung)",
+      "Inhaltsanpassungen (Klinikkontakte, kleinere Inhaltsänderungen)",
+      "Integrations-Workshop für den vollständigen Rollout nach dem Piloten im dritten Monat des Piloten",
+      "Technischer Support",
     ],
     pilotTitle: "Pilotbedingungen",
-    pilotDuration: (n: number) =>
-      `3 Monate über ${n} Klinik${n !== 1 ? "en" : ""}`,
+    pilotDuration: (months: number, n: number) =>
+      `${months} Monate über mind. ${n} Klinik${n !== 1 ? "en" : ""}`,
     pilotLicenses: (n: number) =>
-      `${n} Patient:innen (12 Monate App-Zugang + Garmin-Smartwatch pro Person)`,
+      `${n} Patient:innen (12 Monate App-Zugang + Garmin-Smartwatches)`,
     pilotInvestment: (currency: string, price: string) =>
-      `${currency}${price} (einmalig) — beinhaltet alles oben Genannte`,
-    pilotAfter:
-      "Übergang zu Standardpreisen bei Weiternutzung. Zusätzliche Funktionen, Integrationen oder Anpassungen können mit Mehrkosten verbunden sein.",
+      `${currency}${price} (einmalig) – beinhaltet alles oben Genannte`,
     durationLabel: "Dauer",
     licensesLabel: "Lizenzen",
     investmentLabel: "Investition",
-    afterPilotLabel: "Nach dem Piloten",
     validUntilLabel: "Angebot gültig bis",
-    validityLabel: "Angebotsgültigkeit",
-    aboutTitle: "Über coobi",
-    about:
-      "Berliner Health-Tech-Unternehmen (gegr. 2021). In über 37 Einrichtungen in Deutschland im Einsatz. Vorläufig erstattet durch Deutschlands größten Kostenträger in der Suchttherapie. Zwei klinische Studien (300+ Patient:innen) laufen. King's College London Studie in Vorbereitung. Medizinprodukt-zertifiziert.",
+    phasesTitle: "Pilotphasen",
+    phasesWhenCol: "Wann",
+    phasesWhatCol: "Was passiert",
+    phasesRows: (months: number, licenses: number) => [
+      {
+        when: "Woche 1",
+        what: "Pilotstart & Umsetzung: Kick-off-Workshop, Inhaltsanpassungen, Dashboard-Einrichtung und Mitarbeiterschulung.",
+      },
+      {
+        when: `Monate 1–${months}`,
+        what: `coobi care mit ${licenses} Patient:innen über die Kliniken testen. Kontinuierliches Monitoring, Dashboard-Nutzung und Nachsorge-Integration.`,
+      },
+      {
+        when: `Anfang Monat ${Math.max(1, months - 1)}`,
+        what: "Integrations-Workshop: gemeinsame Auswertung der Pilotergebnisse und Definition der Anforderungen für einen vollständigen Rollout.",
+      },
+      {
+        when: `Monat ${Math.max(1, months - 1)} & ${months}`,
+        what: "Umsetzung zusätzlicher Funktionen, Integrationen oder Anpassungen nach Bedarf.",
+      },
+      {
+        when: "Nach dem Piloten",
+        what: "Übergang zu Standardpreisen bei Weiternutzung.",
+      },
+    ],
     sidebarTitle: "Konfiguration",
     langLabel: "Sprache",
-    clinicLabel: "Klinikname",
-    clinicPlaceholder: "z.B. Sonnenklinik",
+    clinicLabel: "Klinik- / Gruppenname",
+    clinicPlaceholder: "z.B. Rehaklinikverbund",
     numClinicsLabel: "Anzahl Kliniken",
     numLicensesLabel: "Anzahl Lizenzen",
+    pilotDurationLabel: "Pilotdauer (Monate)",
     currencyLabel: "Währung",
     priceLabel: "Preis",
     perPatientLabel: "Pro Patientenlizenz",
@@ -132,8 +180,8 @@ const translations = {
 } as const;
 
 const currencySymbols: Record<string, string> = {
-  EUR: "€",
-  GBP: "£",
+  EUR: "\u20AC",
+  GBP: "\u00A3",
   USD: "$",
   CHF: "CHF ",
   AUD: "A$",
@@ -165,37 +213,38 @@ function getDefaultValidityDate(): string {
 function formatDate(isoDate: string, lang: "en" | "de"): string {
   const d = new Date(isoDate + "T00:00:00");
   return d.toLocaleDateString(lang === "de" ? "de-DE" : "en-US", {
-    day: "numeric",
-    month: "long",
+    day: "2-digit",
+    month: "2-digit",
     year: "numeric",
   });
 }
 
 export default function Home() {
   const [lang, setLang] = useState<"en" | "de">("en");
-  const [clinicName, setClinicName] = useState("");
+  const [clinicName, setClinicName] = useState("Rehab Clinic Groups");
   const [numClinics, setNumClinics] = useState(2);
-  const [numLicenses, setNumLicenses] = useState(20);
-  const [currency, setCurrency] = useState("EUR");
+  const [numLicenses, setNumLicenses] = useState(30);
+  const [pilotMonths, setPilotMonths] = useState(4);
+  const [currency, setCurrency] = useState("GBP");
   const [price, setPrice] = useState(20000);
   const [validUntil, setValidUntil] = useState(getDefaultValidityDate);
 
   const t = translations[lang];
   const sym = currencySymbols[currency];
   const perPatient = numLicenses > 0 ? price / numLicenses : 0;
-  const clinicPossessive =
-    clinicName
-      ? lang === "de"
-        ? `${clinicName}s`
-        : `${clinicName}'s`
-      : lang === "de"
-        ? "Ihren"
-        : "your";
+  const clinicPossessive = clinicName
+    ? lang === "de"
+      ? `${clinicName}s`
+      : `${clinicName}'s`
+    : lang === "de"
+      ? "Ihren"
+      : "your";
 
   const month = getCurrentMonth(lang);
+  const phases = t.phasesRows(pilotMonths, numLicenses);
 
   return (
-    <div className="flex flex-col h-screen print:block print:h-auto">
+    <div data-print-root className="flex flex-col h-screen">
       {/* Top bar */}
       <header
         className="no-print flex items-center justify-between px-6 py-3"
@@ -217,13 +266,10 @@ export default function Home() {
         </button>
       </header>
 
-      <div className="flex flex-1 overflow-hidden print:block print:overflow-visible">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside className="no-print w-80 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-5">
-          <h2
-            className="text-lg font-bold mb-5"
-            style={{ color: "#2C3E50" }}
-          >
+          <h2 className="text-lg font-bold mb-5" style={{ color: "#2C3E50" }}>
             {t.sidebarTitle}
           </h2>
 
@@ -235,22 +281,14 @@ export default function Home() {
             <div className="flex mt-1.5 rounded overflow-hidden border border-gray-300">
               <button
                 onClick={() => setLang("en")}
-                className={`flex-1 py-2 text-sm font-medium transition-colors cursor-pointer ${
-                  lang === "en"
-                    ? "text-white"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
+                className={`flex-1 py-2 text-sm font-medium transition-colors cursor-pointer ${lang === "en" ? "text-white" : "text-gray-600 hover:bg-gray-50"}`}
                 style={lang === "en" ? { backgroundColor: "#1A5276" } : {}}
               >
                 English
               </button>
               <button
                 onClick={() => setLang("de")}
-                className={`flex-1 py-2 text-sm font-medium transition-colors cursor-pointer ${
-                  lang === "de"
-                    ? "text-white"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
+                className={`flex-1 py-2 text-sm font-medium transition-colors cursor-pointer ${lang === "de" ? "text-white" : "text-gray-600 hover:bg-gray-50"}`}
                 style={lang === "de" ? { backgroundColor: "#1A5276" } : {}}
               >
                 Deutsch
@@ -269,9 +307,7 @@ export default function Home() {
               onChange={(e) => setClinicName(e.target.value)}
               placeholder={t.clinicPlaceholder}
               className="mt-1.5 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2"
-              style={
-                { "--tw-ring-color": "#1A5276" } as React.CSSProperties
-              }
+              style={{ "--tw-ring-color": "#1A5276" } as React.CSSProperties}
             />
           </label>
 
@@ -303,6 +339,21 @@ export default function Home() {
             />
           </label>
 
+          {/* Pilot duration */}
+          <label className="block mb-4">
+            <span className="text-sm font-medium" style={{ color: "#566573" }}>
+              {t.pilotDurationLabel}
+            </span>
+            <input
+              type="number"
+              min={1}
+              max={24}
+              value={pilotMonths}
+              onChange={(e) => setPilotMonths(Math.max(1, Math.min(24, +e.target.value)))}
+              className="mt-1.5 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2"
+            />
+          </label>
+
           {/* Currency */}
           <label className="block mb-4">
             <span className="text-sm font-medium" style={{ color: "#566573" }}>
@@ -313,8 +364,8 @@ export default function Home() {
               onChange={(e) => setCurrency(e.target.value)}
               className="mt-1.5 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 bg-white cursor-pointer"
             >
-              <option value="EUR">EUR (€)</option>
-              <option value="GBP">GBP (£)</option>
+              <option value="EUR">EUR (&euro;)</option>
+              <option value="GBP">GBP (&pound;)</option>
               <option value="USD">USD ($)</option>
               <option value="CHF">CHF</option>
               <option value="AUD">AUD (A$)</option>
@@ -361,52 +412,19 @@ export default function Home() {
           {/* Summary card */}
           <div
             className="rounded-lg p-4 border"
-            style={{
-              backgroundColor: "#D6EAF8",
-              borderColor: "#1A5276",
-            }}
+            style={{ backgroundColor: "#D6EAF8", borderColor: "#1A5276" }}
           >
-            <h3
-              className="text-sm font-bold mb-3"
-              style={{ color: "#1A5276" }}
-            >
+            <h3 className="text-sm font-bold mb-3" style={{ color: "#1A5276" }}>
               {t.summaryTitle}
             </h3>
             <div className="space-y-1.5 text-xs" style={{ color: "#2C3E50" }}>
-              <div className="flex justify-between">
-                <span>{t.clinicLabel}:</span>
-                <span className="font-medium">
-                  {clinicName || "—"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>{t.numClinicsLabel}:</span>
-                <span className="font-medium">{numClinics}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>{t.numLicensesLabel}:</span>
-                <span className="font-medium">{numLicenses}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>{t.priceLabel}:</span>
-                <span className="font-medium">
-                  {sym}
-                  {formatNumber(price)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>{t.perPatientLabel}:</span>
-                <span className="font-medium">
-                  {sym}
-                  {formatNumber(Math.round(perPatient * 100) / 100)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>{t.validityDateLabel}:</span>
-                <span className="font-medium">
-                  {formatDate(validUntil, lang)}
-                </span>
-              </div>
+              <SummaryRow label={t.clinicLabel} value={clinicName || "—"} />
+              <SummaryRow label={t.numClinicsLabel} value={String(numClinics)} />
+              <SummaryRow label={t.numLicensesLabel} value={String(numLicenses)} />
+              <SummaryRow label={t.pilotDurationLabel} value={`${pilotMonths}m`} />
+              <SummaryRow label={t.priceLabel} value={`${sym}${formatNumber(price)}`} />
+              <SummaryRow label={t.perPatientLabel} value={`${sym}${formatNumber(Math.round(perPatient * 100) / 100)}`} />
+              <SummaryRow label={t.validityDateLabel} value={formatDate(validUntil, lang)} />
             </div>
           </div>
         </aside>
@@ -414,31 +432,32 @@ export default function Home() {
         {/* Preview */}
         <main className="flex-1 overflow-y-auto bg-gray-100 p-8 print-full">
           <div
-            className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden"
+            data-print-card
+            className="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden"
             style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
           >
             {/* Proposal header */}
             <div
-              className="px-10 py-8"
+              data-print-header
+              className="px-10 py-6"
               style={{ backgroundColor: "#1A5276" }}
             >
-              <h1 className="text-2xl font-bold text-white">
-                {t.title}
-                {clinicName ? ` — ${clinicName}` : ""}
+              <h1 className="text-xl font-bold text-white">
+                <span className="font-bold">{t.title}</span>
+                <span className="font-normal text-white/80">
+                  {" "}- {t.titleSuffix} {clinicName || "..."}
+                </span>
               </h1>
-              <p className="text-sm mt-2" style={{ color: "#D6EAF8" }}>
+              <p className="text-xs mt-1.5" style={{ color: "#D6EAF8" }}>
                 {t.subtitle(month)}
               </p>
             </div>
 
-            <div className="px-10 py-8 space-y-8">
-              {/* The Concept */}
+            <div data-print-body className="px-10 py-6 space-y-5">
+              {/* Pilot Concept */}
               <section>
                 <SectionTitle>{t.conceptTitle}</SectionTitle>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "#2C3E50" }}
-                >
+                <p className="text-xs leading-relaxed" style={{ color: "#2C3E50" }}>
                   {t.concept(clinicPossessive)}
                 </p>
               </section>
@@ -446,39 +465,18 @@ export default function Home() {
               {/* How It Works */}
               <section>
                 <SectionTitle>{t.howTitle}</SectionTitle>
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-xs border-collapse">
                   <thead>
                     <tr>
-                      <th
-                        className="text-left px-4 py-2.5 text-white font-semibold"
-                        style={{ backgroundColor: "#1A5276", width: "30%" }}
-                      >
-                        {lang === "de" ? "Phase" : "Phase"}
-                      </th>
-                      <th
-                        className="text-left px-4 py-2.5 text-white font-semibold"
-                        style={{ backgroundColor: "#1A5276" }}
-                      >
-                        {lang === "de" ? "Beschreibung" : "Description"}
-                      </th>
+                      <Th width="22%">{t.howPhaseCol}</Th>
+                      <Th>{t.howWhatCol}</Th>
                     </tr>
                   </thead>
                   <tbody>
                     {t.howPhases.map((p, i) => (
                       <tr key={i} className="border-b border-gray-200">
-                        <td
-                          className="px-4 py-3 font-medium"
-                          style={{
-                            backgroundColor: "#D6EAF8",
-                            color: "#1A5276",
-                          }}
-                        >
-                          {p.phase}
-                        </td>
-                        <td
-                          className="px-4 py-3"
-                          style={{ color: "#2C3E50" }}
-                        >
+                        <LabelTd>{p.phase}</LabelTd>
+                        <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
                           {p.desc}
                         </td>
                       </tr>
@@ -490,38 +488,22 @@ export default function Home() {
               {/* What's Included */}
               <section>
                 <SectionTitle>{t.includedTitle}</SectionTitle>
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-xs border-collapse">
                   <thead>
                     <tr>
-                      <th
-                        className="text-left px-4 py-2.5 text-white font-semibold"
-                        style={{ backgroundColor: "#1A5276", width: "50%" }}
-                      >
-                        {t.forClients}
-                      </th>
-                      <th
-                        className="text-left px-4 py-2.5 text-white font-semibold"
-                        style={{ backgroundColor: "#1A5276" }}
-                      >
-                        {t.forClinic}
-                      </th>
+                      <Th width="50%">{t.forClients}</Th>
+                      <Th>{t.forClinic}</Th>
                     </tr>
                   </thead>
                   <tbody>
                     {t.clientItems.map((item, i) => (
                       <tr key={i} className="border-b border-gray-200">
-                        <td className="px-4 py-2.5" style={{ color: "#2C3E50" }}>
-                          <span
-                            className="inline-block w-1.5 h-1.5 rounded-full mr-2"
-                            style={{ backgroundColor: "#1A5276" }}
-                          />
+                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                          <Bullet />
                           {item}
                         </td>
-                        <td className="px-4 py-2.5" style={{ color: "#2C3E50" }}>
-                          <span
-                            className="inline-block w-1.5 h-1.5 rounded-full mr-2"
-                            style={{ backgroundColor: "#1A5276" }}
-                          />
+                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
+                          <Bullet />
                           {t.clinicItems[i]}
                         </td>
                       </tr>
@@ -533,91 +515,29 @@ export default function Home() {
               {/* Pilot Terms */}
               <section>
                 <SectionTitle>{t.pilotTitle}</SectionTitle>
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr>
-                      <th
-                        className="text-left px-4 py-2.5 text-white font-semibold"
-                        style={{ backgroundColor: "#1A5276", width: "25%" }}
-                      >
-                        &nbsp;
-                      </th>
-                      <th
-                        className="text-left px-4 py-2.5 text-white font-semibold"
-                        style={{ backgroundColor: "#1A5276" }}
-                      >
-                        &nbsp;
-                      </th>
-                    </tr>
-                  </thead>
+                <table className="w-full text-xs border-collapse">
                   <tbody>
                     <tr className="border-b border-gray-200">
-                      <td
-                        className="px-4 py-3 font-medium"
-                        style={{
-                          backgroundColor: "#D6EAF8",
-                          color: "#1A5276",
-                        }}
-                      >
-                        {t.durationLabel}
-                      </td>
-                      <td className="px-4 py-3" style={{ color: "#2C3E50" }}>
-                        {t.pilotDuration(numClinics)}
+                      <LabelTd width="22%">{t.durationLabel}</LabelTd>
+                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                        {t.pilotDuration(pilotMonths, numClinics)}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
-                      <td
-                        className="px-4 py-3 font-medium"
-                        style={{
-                          backgroundColor: "#D6EAF8",
-                          color: "#1A5276",
-                        }}
-                      >
-                        {t.licensesLabel}
-                      </td>
-                      <td className="px-4 py-3" style={{ color: "#2C3E50" }}>
+                      <LabelTd>{t.licensesLabel}</LabelTd>
+                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
                         {t.pilotLicenses(numLicenses)}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
-                      <td
-                        className="px-4 py-3 font-medium"
-                        style={{
-                          backgroundColor: "#D6EAF8",
-                          color: "#1A5276",
-                        }}
-                      >
-                        {t.investmentLabel}
-                      </td>
-                      <td className="px-4 py-3" style={{ color: "#2C3E50" }}>
+                      <LabelTd>{t.investmentLabel}</LabelTd>
+                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
                         {t.pilotInvestment(sym, formatNumber(price))}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
-                      <td
-                        className="px-4 py-3 font-medium"
-                        style={{
-                          backgroundColor: "#D6EAF8",
-                          color: "#1A5276",
-                        }}
-                      >
-                        {t.afterPilotLabel}
-                      </td>
-                      <td className="px-4 py-3" style={{ color: "#2C3E50" }}>
-                        {t.pilotAfter}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        className="px-4 py-3 font-medium"
-                        style={{
-                          backgroundColor: "#D6EAF8",
-                          color: "#1A5276",
-                        }}
-                      >
-                        {t.validUntilLabel}
-                      </td>
-                      <td className="px-4 py-3 font-medium" style={{ color: "#2C3E50" }}>
+                      <LabelTd>{t.validUntilLabel}</LabelTd>
+                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
                         {formatDate(validUntil, lang)}
                       </td>
                     </tr>
@@ -625,25 +545,42 @@ export default function Home() {
                 </table>
               </section>
 
-              {/* About coobi */}
+              {/* Pilot Phases */}
               <section>
-                <SectionTitle>{t.aboutTitle}</SectionTitle>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "#2C3E50" }}
-                >
-                  {t.about}
-                </p>
+                <SectionTitle>{t.phasesTitle}</SectionTitle>
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr>
+                      <Th width="22%">{t.phasesWhenCol}</Th>
+                      <Th>{t.phasesWhatCol}</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {phases.map((p, i) => (
+                      <tr key={i} className="border-b border-gray-200">
+                        <LabelTd>{p.when}</LabelTd>
+                        <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                          {p.what}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </section>
 
               {/* Contact footer */}
               <footer
-                className="rounded-lg px-6 py-4 text-sm flex flex-wrap items-center gap-x-4 gap-y-1"
-                style={{ backgroundColor: "#D6EAF8", color: "#1A5276" }}
+                className="pt-4 mt-4 text-xs flex flex-wrap items-center gap-x-1"
+                style={{ color: "#566573", borderTop: "1px solid #D6EAF8" }}
               >
-                <span className="font-semibold">Julian Kruse</span>
-                <span>Co-Founder, coobi GmbH</span>
-                <span>julian@coobi.health</span>
+                <span className="font-semibold" style={{ color: "#2C3E50" }}>
+                  Julian Kruse
+                </span>
+                <span>|</span>
+                <span>Co-Founder, Stigma Health GmbH (coobi)</span>
+                <span>|</span>
+                <a href="mailto:julian@coobi.health">julian@coobi.health</a>
+                <span>|</span>
                 <a
                   href="https://cal.com/julian-kruse/demo"
                   className="underline hover:no-underline"
@@ -652,13 +589,14 @@ export default function Home() {
                 >
                   Book a call
                 </a>
+                <span>|</span>
                 <a
                   href="https://www.coobi.health"
                   className="underline hover:no-underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  www.coobi.health
+                  coobi.health
                 </a>
               </footer>
             </div>
@@ -669,13 +607,67 @@ export default function Home() {
   );
 }
 
+/* ── Shared small components ── */
+
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-base font-bold mb-3 pb-1.5 border-b-2"
-      style={{ color: "#1A5276", borderColor: "#1A5276" }}
+      className="text-sm font-bold mb-2 pb-1 border-b"
+      style={{ color: "#1A5276", borderColor: "#D6A84C" }}
     >
       {children}
     </h2>
+  );
+}
+
+function Th({
+  children,
+  width,
+}: {
+  children: React.ReactNode;
+  width?: string;
+}) {
+  return (
+    <th
+      className="text-left px-3 py-2 text-white font-semibold text-xs"
+      style={{ backgroundColor: "#1A5276", width }}
+    >
+      {children}
+    </th>
+  );
+}
+
+function LabelTd({
+  children,
+  width,
+}: {
+  children: React.ReactNode;
+  width?: string;
+}) {
+  return (
+    <td
+      className="px-3 py-2 font-medium text-xs whitespace-pre-line"
+      style={{ backgroundColor: "#D6EAF8", color: "#1A5276", width }}
+    >
+      {children}
+    </td>
+  );
+}
+
+function Bullet() {
+  return (
+    <span
+      className="inline-block w-1 h-1 rounded-full mr-1.5 align-middle"
+      style={{ backgroundColor: "#1A5276" }}
+    />
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between">
+      <span>{label}:</span>
+      <span className="font-medium">{value}</span>
+    </div>
   );
 }

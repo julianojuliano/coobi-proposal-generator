@@ -25,70 +25,79 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 0;
+    margin: 12mm 16mm;
   }
 
-  /* Force background colors & images to render in PDF */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
 
-  /* Hide sidebar, top bar, and export button */
   .no-print {
     display: none !important;
   }
 
-  /* Reset the flex layout so the preview fills the page */
-  body {
+  /* Flatten all wrappers */
+  html, body,
+  #__next,
+  [data-print-root],
+  [data-print-root] > div {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
-  }
-
-  .print-full {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 0 !important;
+  }
+
+  /* Remove card styling */
+  [data-print-card] {
+    max-width: 100% !important;
+    width: 100% !important;
     margin: 0 !important;
-    background: white !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
     overflow: visible !important;
   }
 
-  /* The proposal card — remove shadow/rounding, fill the page */
-  .print-full > div {
-    max-width: 100% !important;
-    margin: 0 !important;
-    box-shadow: none !important;
+  /* Full-bleed header */
+  [data-print-header] {
+    margin: -12mm -16mm 0 -16mm !important;
+    padding: 10mm 16mm 8mm 16mm !important;
     border-radius: 0 !important;
   }
 
-  /* Prevent sections from breaking across pages */
-  section {
+  /* Body content */
+  [data-print-body] {
+    padding: 5mm 0 0 0 !important;
+  }
+
+  [data-print-body] > section {
+    margin-bottom: 4mm !important;
+  }
+
+  /* Page break control */
+  section, footer {
     break-inside: avoid;
     page-break-inside: avoid;
   }
-
-  /* Keep table rows together */
   tr {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* Keep the contact footer together and at the bottom */
-  footer {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  /* Footer */
+  [data-print-body] > footer {
+    margin-top: 4mm !important;
+    padding-top: 3mm !important;
   }
 
-  /* Tighten spacing for print */
-  .print-full > div > div:last-child {
-    padding-top: 24px !important;
-    padding-bottom: 24px !important;
-  }
-
-  /* Show link URLs after link text */
+  /* Show link URLs in print */
   a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-weight: normal;
@@ -98,5 +107,8 @@ body {
   }
   a[href^="http"] {
     text-decoration: none !important;
+  }
+  a[href^="mailto"]::after {
+    content: none;
   }
 }
