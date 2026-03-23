@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const translations = {
   en: {
@@ -242,6 +242,12 @@ export default function Home() {
 
   const month = getCurrentMonth(lang);
   const phases = t.phasesRows(pilotMonths, numLicenses);
+
+  useEffect(() => {
+    document.title = clinicName
+      ? `coobi care — Pilot Proposal for ${clinicName}`
+      : "coobi care — Pilot Proposal";
+  }, [clinicName]);
 
   return (
     <div data-print-root className="flex flex-col h-screen">

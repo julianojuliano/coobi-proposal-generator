@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "coobi care — Pilot Proposal Generator",
+  title: "coobi care — Pilot Proposal",
   description: "Configure and preview pilot proposals for coobi care",
 };
 
