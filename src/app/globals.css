@@ -25,7 +25,7 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 12mm 16mm;
+    margin: 10mm 14mm;
   }
 
   * {
@@ -38,23 +38,30 @@ body {
     display: none !important;
   }
 
-  /* Flatten all wrappers */
-  html, body,
+  /* Nuke every layout wrapper */
+  html,
+  body,
   #__next,
   [data-print-root],
-  [data-print-root] > div {
+  [data-print-root] > *,
+  [data-print-root] > * > *,
+  .print-full {
     display: block !important;
+    position: static !important;
+    float: none !important;
     height: auto !important;
     min-height: 0 !important;
+    max-height: none !important;
     overflow: visible !important;
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    border: none !important;
   }
 
-  /* Remove card styling */
+  /* The proposal card — strip everything */
   [data-print-card] {
     max-width: 100% !important;
     width: 100% !important;
@@ -63,25 +70,26 @@ body {
     box-shadow: none !important;
     border-radius: 0 !important;
     overflow: visible !important;
+    background: white !important;
   }
 
-  /* Full-bleed header */
+  /* Header — full bleed */
   [data-print-header] {
-    margin: -12mm -16mm 0 -16mm !important;
-    padding: 10mm 16mm 8mm 16mm !important;
+    margin: -10mm -14mm 0 -14mm !important;
+    padding: 8mm 14mm 6mm 14mm !important;
     border-radius: 0 !important;
+    background-color: #1A5276 !important;
   }
 
-  /* Body content */
+  /* Body — tight */
   [data-print-body] {
-    padding: 5mm 0 0 0 !important;
+    padding: 4mm 0 0 0 !important;
   }
 
   [data-print-body] > section {
-    margin-bottom: 4mm !important;
+    margin-bottom: 3mm !important;
   }
 
-  /* Page break control */
   section, footer {
     break-inside: avoid;
     page-break-inside: avoid;
@@ -91,24 +99,13 @@ body {
     page-break-inside: avoid;
   }
 
-  /* Footer */
   [data-print-body] > footer {
-    margin-top: 4mm !important;
-    padding-top: 3mm !important;
+    margin-top: 3mm !important;
+    padding-top: 2mm !important;
   }
 
-  /* Show link URLs in print */
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-weight: normal;
-    font-size: 0.7em;
-    text-decoration: none;
-    color: #566573;
-  }
-  a[href^="http"] {
-    text-decoration: none !important;
-  }
-  a[href^="mailto"]::after {
-    content: none;
+  /* Hide link URLs in print — they add clutter */
+  a[href]::after {
+    content: none !important;
   }
 }

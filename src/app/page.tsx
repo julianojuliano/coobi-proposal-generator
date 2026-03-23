@@ -439,7 +439,7 @@ export default function Home() {
             {/* Proposal header */}
             <div
               data-print-header
-              className="px-10 py-6"
+              className="px-8 py-4"
               style={{ backgroundColor: "#1A5276" }}
             >
               <h1 className="text-xl font-bold text-white">
@@ -453,7 +453,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div data-print-body className="px-10 py-6 space-y-5">
+            <div data-print-body className="px-8 py-4 space-y-3">
               {/* Pilot Concept */}
               <section>
                 <SectionTitle>{t.conceptTitle}</SectionTitle>
@@ -476,7 +476,7 @@ export default function Home() {
                     {t.howPhases.map((p, i) => (
                       <tr key={i} className="border-b border-gray-200">
                         <LabelTd>{p.phase}</LabelTd>
-                        <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
                           {p.desc}
                         </td>
                       </tr>
@@ -519,25 +519,25 @@ export default function Home() {
                   <tbody>
                     <tr className="border-b border-gray-200">
                       <LabelTd width="22%">{t.durationLabel}</LabelTd>
-                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
                         {t.pilotDuration(pilotMonths, numClinics)}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.licensesLabel}</LabelTd>
-                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
                         {t.pilotLicenses(numLicenses)}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.investmentLabel}</LabelTd>
-                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
                         {t.pilotInvestment(sym, formatNumber(price))}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <LabelTd>{t.validUntilLabel}</LabelTd>
-                      <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                      <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
                         {formatDate(validUntil, lang)}
                       </td>
                     </tr>
@@ -559,7 +559,7 @@ export default function Home() {
                     {phases.map((p, i) => (
                       <tr key={i} className="border-b border-gray-200">
                         <LabelTd>{p.when}</LabelTd>
-                        <td className="px-3 py-2" style={{ color: "#2C3E50" }}>
+                        <td className="px-3 py-1.5" style={{ color: "#2C3E50" }}>
                           {p.what}
                         </td>
                       </tr>
@@ -570,7 +570,7 @@ export default function Home() {
 
               {/* Contact footer */}
               <footer
-                className="pt-4 mt-4 text-xs flex flex-wrap items-center gap-x-1"
+                className="pt-3 mt-2 text-xs flex flex-wrap items-center gap-x-1"
                 style={{ color: "#566573", borderTop: "1px solid #D6EAF8" }}
               >
                 <span className="font-semibold" style={{ color: "#2C3E50" }}>
@@ -612,7 +612,7 @@ export default function Home() {
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-sm font-bold mb-2 pb-1 border-b"
+      className="text-sm font-bold mb-1.5 pb-0.5 border-b"
       style={{ color: "#1A5276", borderColor: "#D6A84C" }}
     >
       {children}
@@ -629,7 +629,7 @@ function Th({
 }) {
   return (
     <th
-      className="text-left px-3 py-2 text-white font-semibold text-xs"
+      className="text-left px-3 py-1.5 text-white font-semibold text-xs"
       style={{ backgroundColor: "#1A5276", width }}
     >
       {children}
@@ -646,7 +646,7 @@ function LabelTd({
 }) {
   return (
     <td
-      className="px-3 py-2 font-medium text-xs whitespace-pre-line"
+      className="px-3 py-1.5 font-medium text-xs whitespace-pre-line"
       style={{ backgroundColor: "#D6EAF8", color: "#1A5276", width }}
     >
       {children}
